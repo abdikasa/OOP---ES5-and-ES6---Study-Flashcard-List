@@ -8,6 +8,8 @@ function CueCard(question, answer, subject) {
     this.subject = subject;
 }
 
+const form = document.getElementById("qa-form");
+
 
 ///UI Constructor
 
@@ -42,7 +44,22 @@ CCFunctions.prototype.trimArgs = function () {
         document.getElementById('subject').value.trim();
 }
 
-const form = document.getElementById("qa-form");
+CCFunctions.prototype.showAlert = function (msg, className) {
+
+
+    const div = document.createElement('div');
+    div.className = `alert ${className}`;
+    div.appendChild(document.createTextNode(msg.toUpperCase()));
+
+
+    const container = document.querySelector('.container');
+    container.insertBefore(div, form);
+
+    setTimeout(function () {
+        div.remove();
+    }, 4000);
+}
+
 
 //Event Listeners
 form.addEventListener('submit', function (e) {
@@ -57,11 +74,12 @@ form.addEventListener('submit', function (e) {
     ccFunctions.trimArgs();
 
     if (question.length === 0 || answer.length === 0 || subject.length === 0) {
-        alert('Fields are empty')
+        ccFunctions.showAlert('Error, missing arguments, fill them in!', 'error');
     } else {
         const card = new CueCard(question, answer, subject);
         //add cue cards to list
         ccFunctions.addCueCard(card);
+        ccFunctions.showAlert('Success, the card has been created!', 'success');
     }
 
     ccFunctions.clearArgs();
