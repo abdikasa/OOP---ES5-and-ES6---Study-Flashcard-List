@@ -17,18 +17,10 @@ function CueCard(question, answer, subject) {
     this.subject = subject;
 }
 
-const form = document.getElementById("qa-form");
-const tbody = document.getElementById('cards-list');
-let count = document.getElementById('count');
-const filter = document.querySelector('.filter');
-let filtered = [];
-
-let clearAll = document.getElementById('delete-btn');
-
 ///UI Constructor
 function CCFunctions() { }
 
-const ccFunctions = new CCFunctions();
+//const ccFunctions = new CCFunctions();
 
 CCFunctions.prototype.update = function (node, tbody) {
     node.textContent = tbody;
@@ -37,6 +29,7 @@ CCFunctions.prototype.update = function (node, tbody) {
 CCFunctions.prototype.addCueCard = function (card) {
     const list = document.getElementById('cards-list');
     //create the row with the 4 <td> tags.
+    const ccFunctions = new CCFunctions();
     const row = document.createElement('tr');
 
     row.innerHTML = `<td>${card.question}</td>
@@ -45,7 +38,7 @@ CCFunctions.prototype.addCueCard = function (card) {
                     <td><a href="#" class="delete-icon">+</a></td>`
 
     list.appendChild(row);
-    ccFunctions.update(count, tbody.children.length++);
+    ccFunctions.update(document.getElementById('count'), document.getElementById('cards-list').children.length++);
 }
 
 CCFunctions.prototype.clearArgs = function () {
@@ -71,7 +64,7 @@ CCFunctions.prototype.showAlert = function (msg, className) {
 
 
     const container = document.querySelector('.container');
-    container.insertBefore(div, form);
+    container.insertBefore(div, document.getElementById("qa-form"));
 
     setTimeout(function () {
         div.remove();
@@ -80,11 +73,13 @@ CCFunctions.prototype.showAlert = function (msg, className) {
 
 CCFunctions.prototype.filterCards = function (e) {
     console.log(e.target.value);
-    let filteredCount = tbody.children.length;
-    if (filter.value === "") {
-        ccFunctions.update(count, tbody.children.length);
-
+    const ccFunctions = new CCFunctions();
+    let filteredCount = document.getElementById('cards-list').children.length;
+    if (document.querySelector('.filter').value === "") {
+        ccFunctions.update(document.getElementById('count'), document.getElementById('cards-list').children.length);
     }
+
+    let filtered = ccFunctions.filterHelper();
 
     let filteredArr = filtered.map(function (tasks) {
         return tasks.includes(e.target.value.toLowerCase());
@@ -92,28 +87,30 @@ CCFunctions.prototype.filterCards = function (e) {
 
     filteredArr.forEach(function (tasks, index) {
         if (tasks === false) {
-            tbody.children[index].style.position = "absolute";
-            tbody.children[index].style.top = "-9999px";
-            tbody.children[index].style.left = "-9999px";
+            document.getElementById('cards-list').children[index].style.position = "absolute";
+            document.getElementById('cards-list').children[index].style.top = "-9999px";
+            document.getElementById('cards-list').children[index].style.left = "-9999px";
             filteredCount--;
         } else {
-            tbody.children[index].style.position = "relative";
-            tbody.children[index].style.top = "0";
-            tbody.children[index].style.left = "0";
+            document.getElementById('cards-list').children[index].style.position = "relative";
+            document.getElementById('cards-list').children[index].style.top = "0";
+            document.getElementById('cards-list').children[index].style.left = "0";
         }
-        ccFunctions.update(count, filteredCount);
+        ccFunctions.update(document.getElementById('count'), filteredCount);
     })
 }
 
 CCFunctions.prototype.filterHelper = function () {
     let array = [];
-    for (let i = 0; i < tbody.children.length; i++) {
-        array.push(tbody.children[i].children[2].textContent.toLowerCase());
+    for (let i = 0; i < document.getElementById('cards-list').children.length; i++) {
+        array.push(document.getElementById('cards-list').children[i].children[2].textContent.toLowerCase());
     }
     return array;
 }
 
 CCFunctions.prototype.deleteCard = function (e) {
+    const ccFunctions = new CCFunctions();
+    let filtered = ccFunctions.filterHelper();
     if (e.target.classList.contains('delete-icon')) {
         filtered.forEach(function (task, index) {
             if (e.target.parentElement.parentElement.children[2].textContent.toLowerCase() === task.toLowerCase()) {
@@ -121,28 +118,41 @@ CCFunctions.prototype.deleteCard = function (e) {
             }
         })
         e.target.parentElement.parentElement.remove();
-        ccFunctions.update(count, tbody.children.length);
+        ccFunctions.update(document.getElementById('count'), document.getElementById('cards-list').children.length);
+        ccFunctions.showAlert('Card is Deleted', 'success')
     }
 }
 
-tbody.addEventListener("click", function (e) {
+document.getElementById('cards-list').addEventListener("click", function (e) {
+    const ccFunctions = new CCFunctions();
     ccFunctions.deleteCard(e);
 })
 
-filter.addEventListener("input", ccFunctions.filterCards)
+document.querySelector('.filter').addEventListener("input", function (e) {
+    const ccFunctions = new CCFunctions();
+    ccFunctions.filterCards(e);
+})
 
-clearAll.addEventListener("click", ccFunctions.allCardsGone);
+document.getElementById('delete-btn').addEventListener("click", function (e) {
+    const ccFunctions = new CCFunctions();
+    ccFunctions.allCardsGone();
+});
 
 CCFunctions.prototype.allCardsGone = function () {
-    console.log('hi')
-    while (tbody.firstChild) {
-        tbody.firstChild.remove();
+    const ccFunctions = new CCFunctions();
+
+    while (document.getElementById('cards-list').firstChild) {
+        document.getElementById('cards-list').firstChild.remove();
     }
-    filtered = [];
+    //filtered = [];
+    ccFunctions.showAlert('All Cards Cleared', 'success')
+    ccFunctions.update(document.getElementById('count'), document.getElementById('cards-list').children.length);
+
 }
 
 //Event Listeners
-form.addEventListener('submit', function (e) {
+document.getElementById("qa-form").addEventListener('submit', function (e) {
+    const ccFunctions = new CCFunctions();
 
     //1. Create form values
     let question = document.getElementById('question').value,
@@ -160,24 +170,7 @@ form.addEventListener('submit', function (e) {
         ccFunctions.addCueCard(card);
         ccFunctions.showAlert('Success, the card has been created!', 'success');
     }
-    filtered = ccFunctions.filterHelper();
+    let filtered = ccFunctions.filterHelper();
     ccFunctions.clearArgs();
     e.preventDefault();
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
