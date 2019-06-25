@@ -28,8 +28,8 @@ function CCFunctions() { }
 
 const ccFunctions = new CCFunctions();
 
-CCFunctions.prototype.update = function (node) {
-    node.textContent = tbody.children.length;
+CCFunctions.prototype.update = function (node, tbody) {
+    node.textContent = tbody;
 }
 
 CCFunctions.prototype.addCueCard = function (card) {
@@ -43,7 +43,7 @@ CCFunctions.prototype.addCueCard = function (card) {
                     <td><a href="#" class="delete-icon">+</a></td>`
 
     list.appendChild(row);
-    ccFunctions.update(count);
+    ccFunctions.update(count, tbody.children.length);
 }
 
 CCFunctions.prototype.clearArgs = function () {
@@ -78,6 +78,11 @@ CCFunctions.prototype.showAlert = function (msg, className) {
 
 CCFunctions.prototype.filterCards = function (e) {
     console.log(e.target.value);
+    let filteredCount = tbody.children.length;
+    if (filter.value === "") {
+        ccFunctions.update(count, tbody.children.length);
+        
+    }
 
     let filteredArr = filtered.map(function (tasks) {
         return tasks.includes(e.target.value.toLowerCase());
@@ -88,12 +93,13 @@ CCFunctions.prototype.filterCards = function (e) {
             tbody.children[index].style.position = "absolute";
             tbody.children[index].style.top = "-9999px";
             tbody.children[index].style.left = "-9999px";
-
+            filteredCount--;
         } else {
             tbody.children[index].style.position = "relative";
             tbody.children[index].style.top = "0";
             tbody.children[index].style.left = "0";
         }
+        ccFunctions.update(count, filteredCount);
     })
 }
 
@@ -113,7 +119,7 @@ CCFunctions.prototype.deleteCard = function (e) {
             }
         })
         e.target.parentElement.parentElement.remove();
-        ccFunctions.update(count);
+        ccFunctions.update(count, tbody.children.length);
     }
 }
 
