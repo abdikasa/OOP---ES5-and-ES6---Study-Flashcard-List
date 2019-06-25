@@ -23,6 +23,8 @@ let count = document.getElementById('count');
 const filter = document.querySelector('.filter');
 let filtered = [];
 
+let clearAll = document.getElementById('delete-btn');
+
 ///UI Constructor
 function CCFunctions() { }
 
@@ -43,7 +45,7 @@ CCFunctions.prototype.addCueCard = function (card) {
                     <td><a href="#" class="delete-icon">+</a></td>`
 
     list.appendChild(row);
-    ccFunctions.update(count, tbody.children.length);
+    ccFunctions.update(count, tbody.children.length++);
 }
 
 CCFunctions.prototype.clearArgs = function () {
@@ -81,7 +83,7 @@ CCFunctions.prototype.filterCards = function (e) {
     let filteredCount = tbody.children.length;
     if (filter.value === "") {
         ccFunctions.update(count, tbody.children.length);
-        
+
     }
 
     let filteredArr = filtered.map(function (tasks) {
@@ -129,6 +131,15 @@ tbody.addEventListener("click", function (e) {
 
 filter.addEventListener("input", ccFunctions.filterCards)
 
+clearAll.addEventListener("click", ccFunctions.allCardsGone);
+
+CCFunctions.prototype.allCardsGone = function () {
+    console.log('hi')
+    while (tbody.firstChild) {
+        tbody.firstChild.remove();
+    }
+    filtered = [];
+}
 
 //Event Listeners
 form.addEventListener('submit', function (e) {
