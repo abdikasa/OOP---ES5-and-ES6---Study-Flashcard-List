@@ -35,6 +35,12 @@
             color: #000;
             margin-top: 50%;
         }
+
+        #delete {
+            position: absolute;
+            right: 0;
+            margin-top: -5.4rem;
+        }
     </style>
 </head>
 
@@ -60,7 +66,11 @@
                 <input type="submit" value="Submit" class="submit-btn">
             </div>
         </form>
-        <h5 id="num-of-tasks">Number of terms in the list</h5>
+        <div id="heading_">
+            <h5>Number of terms in the list (<span id="count">0</span>) </h5>
+            <button id="delete">Clear All</button>
+            <input type="text" class= "filter u-full-width" placeholder="Filter By Subject">
+        </div>
         <table class="u-full-width">
             <thead>
                 <tr>
