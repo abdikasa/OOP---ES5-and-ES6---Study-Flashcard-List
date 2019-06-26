@@ -171,6 +171,10 @@ CCFunctions.prototype.removeFromLS = function (e) {
 
 }
 
+CCFunctions.prototype.clearLS = function () {
+    localStorage.removeItem('cards');
+}
+
 
 //Event Listeners
 
@@ -222,6 +226,7 @@ document.querySelector('.filter').addEventListener("input", function (e) {
 document.getElementById('delete-btn').addEventListener("click", function (e) {
     const ccFunctions = new CCFunctions();
     ccFunctions.allCardsGone();
+    ccFunctions.clearLS();
 });
 
 

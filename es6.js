@@ -132,8 +132,8 @@ class localStorageFunctions {
 
     static deleteFromLS(e) {
         let cards = localStorageFunctions.retreiveFromLS();
-        cards.forEach(function(card, index){
-            if(e.target.parentElement.previousElementSibling.textContent === card.subject){
+        cards.forEach(function (card, index) {
+            if (e.target.parentElement.previousElementSibling.textContent === card.subject) {
                 cards.splice(index, 1);
             }
         })
@@ -152,14 +152,18 @@ class localStorageFunctions {
         return cards;
     }
 
-    static  displayCards() {
+    static displayCards() {
         //1. Get the cards, they are now in JSON form, the way we want it. 
         let cards = localStorageFunctions.retreiveFromLS();
         //Loop through it and add to the screen.
-        cards.forEach(function(card){
+        cards.forEach(function (card) {
             const ccFunctions = new CCFunctions();
             ccFunctions.addCueCard(card);
         })
+    }
+
+    static clearLS() {
+        localStorage.removeItem('cards');
     }
 }
 
@@ -182,6 +186,7 @@ document.querySelector('.filter').addEventListener("input", function (e) {
 document.getElementById('delete-btn').addEventListener("click", function (e) {
     const ccFunctions = new CCFunctions();
     ccFunctions.allCardsGone();
+    localStorageFunctions.clearLS();
 });
 
 document.getElementById("qa-form").addEventListener('submit', function (e) {
