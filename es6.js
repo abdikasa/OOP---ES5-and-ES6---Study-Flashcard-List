@@ -123,11 +123,55 @@ class CCFunctions {
     }
 }
 
+class localStorageFunctions {
+    static addToLS(card) {
+        const cards = localStorageFunctions.retreiveFromLS();
+        cards.push(card);
+        localStorage.setItem('cards', JSON.stringify(cards));
+    }
+
+    static deleteFromLS(e) {
+        let cards = localStorageFunctions.retreiveFromLS();
+        cards.forEach(function(card, index){
+            if(e.target.parentElement.previousElementSibling.textContent === card.subject){
+                cards.splice(index, 1);
+            }
+        })
+        localStorage.setItem('cards', JSON.stringify(cards));
+    }
+
+    static retreiveFromLS() {
+        //Unlike var or let, you must specify a value for a const declaration.
+        //const cards
+        let cards;
+        if (localStorage.getItem('cards') === null) {
+            cards = [];
+        } else {
+            cards = JSON.parse(localStorage.getItem('cards'));
+        }
+        return cards;
+    }
+
+    static  displayCards() {
+        //1. Get the cards, they are now in JSON form, the way we want it. 
+        let cards = localStorageFunctions.retreiveFromLS();
+        //Loop through it and add to the screen.
+        cards.forEach(function(card){
+            const ccFunctions = new CCFunctions();
+            ccFunctions.addCueCard(card);
+        })
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", localStorageFunctions.displayCards);
+
 
 //Event Listeners
 document.getElementById('cards-list').addEventListener("click", function (e) {
     const ccFunctions = new CCFunctions();
     ccFunctions.deleteCard(e);
+    localStorageFunctions.deleteFromLS(e);
 })
 
 document.querySelector('.filter').addEventListener("input", function (e) {
@@ -157,6 +201,7 @@ document.getElementById("qa-form").addEventListener('submit', function (e) {
         const card = new CueCard(question, answer, subject);
         //add cue cards to list
         ccFunctions.addCueCard(card);
+        localStorageFunctions.addToLS(card);
         ccFunctions.showAlert('Success, the card has been created!', 'success');
     }
     ccFunctions.clearArgs();
