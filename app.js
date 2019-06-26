@@ -108,21 +108,6 @@ CCFunctions.prototype.deleteCard = function (e) {
     }
 }
 
-document.getElementById('cards-list').addEventListener("click", function (e) {
-    const ccFunctions = new CCFunctions();
-    ccFunctions.deleteCard(e);
-})
-
-document.querySelector('.filter').addEventListener("input", function (e) {
-    const ccFunctions = new CCFunctions();
-    ccFunctions.filterCards(e);
-})
-
-document.getElementById('delete-btn').addEventListener("click", function (e) {
-    const ccFunctions = new CCFunctions();
-    ccFunctions.allCardsGone();
-});
-
 CCFunctions.prototype.allCardsGone = function () {
     const ccFunctions = new CCFunctions();
 
@@ -133,7 +118,69 @@ CCFunctions.prototype.allCardsGone = function () {
     ccFunctions.update(document.getElementById('count'), document.getElementById('cards-list').children.length);
 }
 
+//Storage Prototype Functions
+
+CCFunctions.prototype.fetchFromLS = function () {
+    let cards;
+    if (localStorage.getItem('cards') === null) {
+        //cards is empty
+        cards = []
+    } else {
+        //otherise get the items in LS, wapped in JSON.parse, to return cards
+        cards = JSON.parse(localStorage.getItem('cards'));
+    }
+    return cards;
+}
+
+CCFunctions.prototype.addToLS = function (card) {
+    const ccFunctions = new CCFunctions();
+    //1. Get existing cards
+    const cards = ccFunctions.fetchFromLS();
+    //2.  Add the new passed card.
+    cards.push(card);
+    //3. Store Card in LS, LS takes strings, so convert the JSON to string with stringify.
+    localStorage.setItem('cards', JSON.stringify(cards));
+}
+
+CCFunctions.prototype.showCards = function () {
+    const ccFunctions = new CCFunctions();
+    //1. Get existing cards
+    const cards = ccFunctions.fetchFromLS();
+    //loop through cards
+    cards.forEach(function (card) {
+        ccFunctions.addCueCard(card);
+    })
+}
+
+CCFunctions.prototype.removeFromLS = function (e) {
+
+    if (e.target.classList.contains("delete-icon")) {
+        const ccFunctions = new CCFunctions();
+        let cards = ccFunctions.fetchFromLS();
+        cards.forEach(function (card, i) {
+            if (e.target.parentElement.previousElementSibling.textContent === card.subject) {
+                //console.log("yes, "will always return yes")
+                cards.splice(i, 1);
+            }
+        })
+        //Set local storage adter deletion, addition, etc
+        //Remember, the chanegs won't be shown till we convert our JSOn to string.
+        //Remember, cards variable returns a JSON.parse object.
+        localStorage.setItem('cards', JSON.stringify(cards));
+    }
+
+}
+
+
 //Event Listeners
+
+//Load Cards from LS
+document.addEventListener('DOMContentLoaded', function () {
+    const ccFunctions = new CCFunctions();
+    ccFunctions.showCards();
+})
+
+//Submitting/Adding A Book
 document.getElementById("qa-form").addEventListener('submit', function (e) {
     const ccFunctions = new CCFunctions();
 
@@ -144,15 +191,37 @@ document.getElementById("qa-form").addEventListener('submit', function (e) {
 
     //trim spaces    
     ccFunctions.trimArgs();
-    
+
     if (question.length === 0 || answer.length === 0 || subject.length === 0) {
         ccFunctions.showAlert('Error, missing arguments, fill them in!', 'error');
     } else {
         const card = new CueCard(question, answer, subject);
         //add cue cards to list
         ccFunctions.addCueCard(card);
+        ccFunctions.addToLS(card);
         ccFunctions.showAlert('Success, the card has been created!', 'success');
     }
     ccFunctions.clearArgs();
     e.preventDefault();
 })
+
+//Delete Listener
+document.getElementById('cards-list').addEventListener("click", function (e) {
+    const ccFunctions = new CCFunctions();
+    ccFunctions.removeFromLS(e);
+    ccFunctions.deleteCard(e);
+})
+
+//Filter Listener
+document.querySelector('.filter').addEventListener("input", function (e) {
+    const ccFunctions = new CCFunctions();
+    ccFunctions.filterCards(e);
+})
+
+//Clear All Listener
+document.getElementById('delete-btn').addEventListener("click", function (e) {
+    const ccFunctions = new CCFunctions();
+    ccFunctions.allCardsGone();
+});
+
+
