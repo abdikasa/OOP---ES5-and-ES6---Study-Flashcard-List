@@ -1,16 +1,3 @@
-
-// (function () {
-//     let tableHeader = document.getElementById('num-of-tasks');
-//     function upperCase(node) {
-//         return node.textContent.toUpperCase();
-//     }
-//     tableHeader.textContent = upperCase(tableHeader);
-// })()
-
-
-//CueCard Constructor
-//Creating the Cue Card
-
 function CueCard(question, answer, subject) {
     this.question = question;
     this.answer = answer;
@@ -19,8 +6,6 @@ function CueCard(question, answer, subject) {
 
 ///UI Constructor
 function CCFunctions() { }
-
-//const ccFunctions = new CCFunctions();
 
 CCFunctions.prototype.update = function (node, tbody) {
     node.textContent = tbody;
@@ -38,7 +23,7 @@ CCFunctions.prototype.addCueCard = function (card) {
                     <td><a href="#" class="delete-icon">+</a></td>`
 
     list.appendChild(row);
-    ccFunctions.update(document.getElementById('count'), document.getElementById('cards-list').children.length++);
+    ccFunctions.update(document.getElementById('count'), list.children.length);
 }
 
 CCFunctions.prototype.clearArgs = function () {
@@ -144,10 +129,8 @@ CCFunctions.prototype.allCardsGone = function () {
     while (document.getElementById('cards-list').firstChild) {
         document.getElementById('cards-list').firstChild.remove();
     }
-    //filtered = [];
     ccFunctions.showAlert('All Cards Cleared', 'success')
     ccFunctions.update(document.getElementById('count'), document.getElementById('cards-list').children.length);
-
 }
 
 //Event Listeners
@@ -161,7 +144,7 @@ document.getElementById("qa-form").addEventListener('submit', function (e) {
 
     //trim spaces    
     ccFunctions.trimArgs();
-
+    
     if (question.length === 0 || answer.length === 0 || subject.length === 0) {
         ccFunctions.showAlert('Error, missing arguments, fill them in!', 'error');
     } else {
@@ -170,7 +153,6 @@ document.getElementById("qa-form").addEventListener('submit', function (e) {
         ccFunctions.addCueCard(card);
         ccFunctions.showAlert('Success, the card has been created!', 'success');
     }
-    let filtered = ccFunctions.filterHelper();
     ccFunctions.clearArgs();
     e.preventDefault();
 })
